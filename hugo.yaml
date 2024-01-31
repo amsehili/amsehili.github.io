@@ -1,0 +1,74 @@
+baseurl: "https://amsehili.github.io/"
+languageCode: en-us
+title: "Amine Sehili"
+author: "Amine Sehili"
+theme:
+  - hugo-theme-relearn
+module:
+  hugoVersion:
+    min: 0.112.4
+mediaTypes:
+  text/javascript:
+    suffixes:
+      - js
+outputFormats:
+  PRINT:
+    name: PRINT
+    baseName: index.print
+    isHTML: true
+    mediaType: text/html
+    permalinkable: false
+    noUgly: true
+  SEARCH:
+    name: SEARCH
+    baseName: index.search
+    isPlainText: true
+    mediaType: text/javascript
+    permalinkable: false
+    noUgly: true
+  SEARCHPAGE:
+    name: SEARCHPAGE
+    baseName: search
+    isHTML: true
+    mediaType: text/html
+    permalinkable: false
+    noUgly: true
+params:
+  showAuthorAndDate: true
+  relearn:
+    dependencies:
+      mathjax:
+        name: MathJax
+        location: footer
+      mermaid:
+        name: Mermaid
+        location: footer
+      openapi:
+        name: OpenApi
+        location: footer
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+
+
+languages:
+  en:
+    title: Hugo Relearn Theme
+    weight: 1
+    languageName: English
+    params:
+      landingPageName: <i class='fas fa-home'></i> Home
+    menu:
+      shortcuts:
+        - name: <i class='fab fa-fw fa-github'></i> GitHub
+          identifier: ds
+          url: 'https://github.com/amsehili/'
+          weight: 10
+        - name: <i class='fab fa-fw fa-linkedin'></i> Linkedin
+          url: https://www.linkedin.com/in/aminesehili
+          weight: 20
+
+Shortcuts-Title:
+  other: About
