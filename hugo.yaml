@@ -55,7 +55,7 @@ markup:
 
 languages:
   en:
-    title: Hugo Relearn Theme
+    title: Amine SEHILI
     weight: 1
     languageName: English
     params:
@@ -69,6 +69,3 @@ languages:
         - name: <i class='fab fa-fw fa-linkedin'></i> Linkedin
           url: https://www.linkedin.com/in/aminesehili
           weight: 20
-
-Shortcuts-Title:
-  other: About

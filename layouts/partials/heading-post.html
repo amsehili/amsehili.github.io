@@ -1,0 +1,9 @@
+{{ .Params.headingPost | safeHTML }}
+
+{{ if .Params.date }}
+{{- $pubDate := .PublishDate | time.Format ":date_medium" }}
+
+<div class="author">Amine SEHILI</div>
+<div class="pubdate">{{ $pubDate }}</div>
+<hr class="header">
+{{ end }}
