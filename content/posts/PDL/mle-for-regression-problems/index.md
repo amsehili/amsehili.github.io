@@ -6,16 +6,25 @@ draft = false
 +++
 
 # Introduction
-In a binary or a multiclass classification problem, the output of a machine learning model is usually the conditional probability of each class $c_i$ (out of $C$ classes in the data) given some input $x$ and the model parameters $w$:
+In a binary or a multiclass classification problem, the output of a machine learning model is usually the conditional probability that the target, $y$, equals each class $c_i$ (out of $C$ classes in the data) given some input $x$ and the model parameters $w$:
 
-$$ p_i(y = c_i | x, w) \quad $$ 
+In a binary or multiclass classification problem, the output of a machine learning model is typically represented as the conditional probability that the target variable, $y$, corresponds to each specific class $c_i$​ (from a total of $C$ classes in the dataset), given an input $x$ and the model parameters $w$.
 
-for $i \in \{0, \ldots, C-1\}$ and $\sum {p_i} = 1$.
+$$ p_i(y = c_i | x, w) \quad $$
 
-These $p_i$ probabilities can be seen as the **parameters of a distribution** over the classes given the input $x$ and the model parameters $w$. In other words, for each input $x$, the model's output can be used to *build* a probability distribution function and compute the probability that $x$ belongs to each class.
+for $i \in \{0, \ldots, C-1\}$ and $\sum{p_i} = 1$.
 
+These $p_i$ probabilities represent the **parameters of a distribution** over the classes, given the input $x$ and the model parameters $w$. In other words, for each input $x$, the model's output can be used to build a probability distribution function, which then allows us to compute the probability that $x$ belongs to each class.
 
-In the case of binary a classification with two classes $c_0=0$ and $c_1=1$, the output of the model is $p_1$, that is the probability that $x$ belongs to $c_1$, with $p_0 = 1 - p_1$. In this case $p_1$ can be seen as the $p$ parameter of a Bernoulli distribution:
+In the case of binary classification with two classes $c_0=0$ and $c_1=1$, the model outputs $p_1$ as the probability that the input $x$ belongs to class $c_1$, with $p_0 = 1 - p_1$ indicating the probability of $x$ belonging to class $c_0$. In this scenario, $p_1$ is equivalent to the parameter $p$ of a Bernoulli distribution:
+
+$$
+P(y) =
+    \begin{cases}
+      p_0 & \text{for} \quad y=0 \\\\
+      p_1 & \text{for} \quad y=1
+    \end{cases}
+$$
 
 $$
 P(y) =
@@ -600,7 +609,7 @@ from torch.optim import Adam
 
 def proba_normal(y, mu, sigma=1):
     pi = torch.tensor(torch.pi, dtype=torch.float64)
-    const = 1 / sigma * torch.sqrt(2 * pi)
+    const = 1 / (sigma * torch.sqrt(2 * pi))
     return const * torch.exp(-((y - mu) ** 2) / (2 * sigma**2))
 
 
@@ -637,7 +646,7 @@ from tensorflow.keras import Sequential
 
 
 def proba_normal(y, mu, sigma=1):
-    const = tf.cast(1 / sigma * tf.sqrt(2 * np.pi), "float64")
+    const = tf.cast(1 / (sigma * tf.sqrt(2 * np.pi)), "float64")
     return const * tf.exp(-((y - mu) ** 2) / (2 * sigma**2))
 
 
@@ -675,7 +684,7 @@ model.compile(optimizer=optimizer, loss=NLL)
 optimizer = Adam(model.parameters(), lr=1e-1)
 X_t = torch.tensor(X, dtype=torch.float64)
 y_t = torch.tensor(y[:, None], dtype=torch.float64)
-train_model(X_t, y_t, model, optimizer, NLL, n_epochs=500, log_at=50)
+train_model(X_t, y_t, model, optimizer, NLL, n_epochs=200, log_at=20)
 ```
 {{% /tab %}}
 
@@ -689,16 +698,16 @@ model.fit(X_t, y_t, epochs=200)
 {{% /tab %}}
 {{< /tabs >}}
 
-    Epoch 50, NLL: 4.4939
-    Epoch 100, NLL: 3.9800
-    Epoch 150, NLL: 3.8679
-    Epoch 200, NLL: 3.8244
-    Epoch 250, NLL: 3.8112
-    Epoch 300, NLL: 3.8080
-    Epoch 350, NLL: 3.8075
-    Epoch 400, NLL: 3.8074
-    Epoch 450, NLL: 3.8074
-    Epoch 500, NLL: 3.8074
+    Epoch 20, NLL: 6.4613
+    Epoch 40, NLL: 6.1532
+    Epoch 60, NLL: 5.9518
+    Epoch 80, NLL: 5.8097
+    Epoch 100, NLL: 5.7323
+    Epoch 120, NLL: 5.6888
+    Epoch 140, NLL: 5.6655
+    Epoch 160, NLL: 5.6539
+    Epoch 180, NLL: 5.6487
+    Epoch 200, NLL: 5.6465
 
 
 Next, we run prediction and compare the model trained with NLL to the one obtained using MSE. Note that for the new model, the output, $mu$, is a parameter of the distribution—specifically, the mean of the Gaussian distribution—and represents the model's best guess, equivalent to the prediction from the MSE-trained model. However, this direct equivalence will not always hold for other types of distributions or mixtures of distributions. In those cases, we may need to explicitly compute the mean of the distribution to determine the model's best guess.
