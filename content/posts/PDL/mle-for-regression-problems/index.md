@@ -1,7 +1,7 @@
 +++
 title = 'Maximum Likelihood Estimation for regression problems'
 author = 'Amine Sehili'
-publishDate = '2024-01-27T22:36:38-08:18'
+publishDate = '2024-01-27T22:36:18'
 draft = false
 +++
 
@@ -506,7 +506,7 @@ p(\mathcal{D}|\theta) = & \prod_{i=1}^{N}p(y_i|\mu_{x_i}, \sigma_{x_i}) \\\\
 \end{aligned}
 $$
 
-For the sake of clarity, we use $x_{i}$ as a subscript for $\mu_{x_i}$ and $\sigma_{x_i}$ to emphasize that when computing the probability density of $y_i$, the parameters of the normal distribution are determined as functions of $x_i$: $\theta_i = f_w(x_i) = (\mu_{x_i}$, $\sigma_{x_i})$.
+For the sake of clarity, we use $x_{i}$ as a subscript for $\mu_{x_i}$ and $\sigma_{x_i}$ to emphasize that when computing the probability density of $y_i$, the parameters of the normal distribution are determined as a function of $x_i$: $\theta_i = f_w(x_i) = (\mu_{x_i}$, $\sigma_{x_i})$.
 
 By taking the negative of the logarithm, we obtain the NLL:
 
@@ -532,7 +532,7 @@ $$ \text{NLL}(\mathcal{D}|\theta) = \frac{1}{N}\sum_{i=1}^{N} (y - \mu_{x_i})^2$
 
 This looks much like the MSE defined above. Indeed, under the assumptions of linear regression, these two loss functions become equivalent, with $\mu_{x_i} = a \cdot x_i + b$, where $a$ and $b$ are the parameters (slop and bias) of the linear model.
 
-You might wonder why use NLL since it's the same as MSE. The reason will become clear in upcoming articles, where we'll relax some linear regression assumptions and extend our model to include the other parameter of a Gaussian distribution, $\sigma$. This will allow us to compute the likelihood of the precited values and assess the uncertainty of the model's predictions. Moreover, we'll explore fitting the parameters of other distributions or mixtures of distributions in scenarios where MSE may not be a suitable choice. This approach provides a more flexible framework for modeling complex datasets.
+You might wonder why use NLL since it's the same as MSE. The reason will become clear in upcoming articles, where we'll relax some linear regression assumptions and extend our model to include the other parameter of a Gaussian distribution, $\sigma$. This will allow us to compute the likelihood of the predicted values and assess the uncertainty of the model's predictions. Moreover, we'll explore fitting the parameters of other distributions or mixtures of distributions in scenarios where MSE may not be a suitable choice. This approach provides a more flexible framework for modeling complex datasets.
 
 
 
