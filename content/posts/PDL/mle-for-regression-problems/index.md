@@ -26,14 +26,6 @@ P(y) =
     \end{cases}
 $$
 
-$$
-P(y) =
-    \begin{cases}
-      p_0 & \text{for} \quad y=0 \\\\
-      p_1 & \text{for} \quad y=1
-    \end{cases}
-$$
-
 
 ![png](output_2_1.png)
 
