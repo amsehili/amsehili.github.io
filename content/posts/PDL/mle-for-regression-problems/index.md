@@ -463,9 +463,9 @@ $$
 
 which is the product of probabilities $p(y_i)$ given the inputs $x_i$ and $\theta_i$, the parameters of the probability density.
 
-Notice that we explicitly use the subscript $i$ in the right side of previous eaquation for $x$, $y$ and the model parameters $\theta$. This is to emphasize the fact that we're dealing with a supervised problem. In fact, our goal is to create a conditional model $p(y_i|x_i)$ parametrized by $\theta_i$ for each $(x_i, y_i)$ pair in the dataset. This is different from the unsupervised learning where we're only given $y$ (often using $x$ instead of $y$ to refer to the data) and our goal is to fit the unconditional distribution $p(y)$.
+Notice that we explicitly use the subscript $i$ on the right side of the previous equation for $x$, $y$ and the model parameters $\theta$. This is to emphasize the fact that we're dealing with a supervised problem. In fact, our goal is to create a conditional model $p(y_i|x_i)$ parametrized by $\theta_i$ for each $(x_i, y_i)$ pair in the dataset. This is different from the unsupervised learning, where we're only given $y$ (often using $x$ instead of $y$ to refer to the data) and our goal is to fit the unconditional distribution $p(y)$.
 
-More precisely, our goal is to come up with a function $f_w(x_i) = \theta_i$ that maximizes the conditional probability mentioned above. It's important to highlight that $f_w$ is the same for all $(x_i, \theta_i)$. It can be a neural network for example that takes $x_i$ as input and returns as many values as we need for the distribution we picked for our data.
+More precisely, our goal is to come up with a function $f_w(x_i) = \theta_i$ that maximizes the conditional probability mentioned above. It's important to highlight that $f_w$ is the same for all $(x_i, \theta_i)$. It can be a neural network, for example, that takes $x_i$ as input and returns as many values as we need for the distribution we picked for our data.
 
 ## NLL
 Instead of multiplying the probabilities as in the previous equation, we can compute the sum of their logarithms to obtain the **Log-Likelihood**:
@@ -483,7 +483,7 @@ $$
 
 ## Going from NLL to MSE under the assumptions of linear regression
 
-So far, we have assumed that our data samples are independent and identically distributed (i.i.d.). For a linear regression problem, we also assume that the residuals (i.e., prediction errors) follows a normal distribution. Therefore, we can represent the probability density function $p$ as a Gaussian distribution with parameters $\theta = (\mu, \sigma)$, where $\mu$ represents the center of the distribution (i.e., the mean), and $\sigma$ represents its scale (i.e., standard deviation). The probability density function (PDF) of a Gaussian distribution is defined as:
+So far, we have assumed that our data samples are independent and identically distributed (i.i.d.). For a linear regression problem, we also assume that the residuals (i.e., prediction errors) follow a normal distribution. Therefore, we can represent the probability density function $p$ as a Gaussian distribution with parameters $\theta = (\mu, \sigma)$, where $\mu$ represents the center of the distribution (i.e., the mean), and $\sigma$ represents its scale (i.e., standard deviation). The probability density function (PDF) of a Gaussian distribution is defined as:
 
 $$
 p(y|\mu, \sigma) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{(y - \mu)^2}{2\sigma^2}}
@@ -520,7 +520,7 @@ $$
 
 Dividing by $N$ we finally obtain:
 
-$$ \text{NLL}(\mathcal{D}|\theta) = \frac{1}{N}\sum_{i=1}^{N} (y - \mu_{x_i})^2$$
+$$ \text{NLL}(\mathcal{D}|\theta) = \frac{1}{N}\sum_{i=1}^{N} (y_i - \mu_{x_i})^2$$
 
 This looks much like the MSE defined above. Indeed, under the assumptions of linear regression, these two loss functions become equivalent, with $\mu_{x_i} = a \cdot x_i + b$, where $a$ and $b$ are the parameters (slop and bias) of the linear model.
 
