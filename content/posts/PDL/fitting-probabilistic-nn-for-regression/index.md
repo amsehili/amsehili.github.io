@@ -279,29 +279,23 @@ print(f"NLL: {nll_nn:.4}", f"MSE: {mse_nn:.4}")
     NLL: 2.971 MSE: 32.56
 
 ### Validation loss of the MSE-optimized model
-Given that this model doesn't predict the standard deviation of the data, we can calculate the std of the residuals as an alternative for use in computing the NLL of all validation points. However, in the subsequent code block, we will calculate the NLL for std values ranging from 1 to 10 (increasing by 0.1) and pick the lowest NLL.
+Given that this model doesn't predict the std of the data, we can calculate the std of the residuals and use it to compute the NLL of the model on validation data.
 
 
 ```python
 mu = lin_model.predict(X_val)
+sigma = np.std(mu - y_val)
+dist = norm(mu, sigma)
+nll = -np.log(dist.pdf(y_val)).mean()
 
-nll_lin = np.inf
-best_sigma = None
-
-for sigma_res in np.arange(1, 10.1, 0.1):
-    dist = norm(mu, sigma_res)
-    nll = -np.log(dist.pdf(y_val)).mean()
-    if nll < nll_lin:
-        nll_lin = nll
-
-mse_lin = ((mu - y_val) ** 2).mean()
-print(f"NLL: {nll_lin:.4}", f"MSE: {mse_lin:.4}")
+mse = ((mu - y_val) ** 2).mean()
+print(f"NLL: {nll:.4}", f"MSE: {mse:.4}")
 ```
 
     NLL: 3.176 MSE: 33.56
 
 
-We can observe that the NLL-optimized model outperforms the MSE-optimized one when considering both loss metrics. Furthermore, this model enables us to compute the probability density of the predicted target values, thereby allowing us to quantify the uncertainty associated with each prediction. We will delve deeper into this aspect in the final part of the article. In the next section, we'll move beyond the assumption of data linearity and fit our first probabilistic non-linear regression model.
+We can see that the NLL-optimized model outperforms the MSE-optimized one when considering both loss metrics. Furthermore, this model enables us to compute the probability density of the predicted target values, thereby allowing us to quantify the uncertainty associated with each prediction. We will delve deeper into this aspect in the final part of the article. In the next section, we'll move beyond the assumption of data linearity and fit our first probabilistic non-linear regression model.
 
 ## Relaxing the assumption about the linearity of the data
 Dealing with non-linear data in regression problems is a very common in practice. One effective strategy to address this using neural networks involves employing non-linear activation functions. Additionally, depending on the complexity of the data, enhancing the network's representation capacity by adding more layers and increasing the number of parameters within these layers can be beneficial. In the following section, we will generate some non-linear data then construct a neural network with two layers and a non-linear activation and fit it on the generated data.
@@ -852,11 +846,9 @@ def plot_dist_and_proba(dist, start, end, value, fontsize=10):
     )
 
     proba = 1 - dist.cdf(value)
-
     xpos = value * 1.01
     ypos = dist.pdf(value) / 3
-
-    plt.text(xpos, ypos, f"$p$(vote > 50) = {proba:.2f}", fontsize=fontsize)
+    plt.text(xpos, ypos, f"$p$(vote > {value}) = {proba:.2f}", fontsize=fontsize)
 ```
 {{% /expand %}}
 
@@ -869,7 +861,7 @@ sigma = np.exp(theta[1])
 dist = norm(mu, sigma)
 plt.subplot(1, 2, 1)
 plot_dist_and_proba(dist, 30, 75, 50)
-plt.title("Probabilistic model")
+plt.title("Probabilistic model with fitted std")
 
 # compute the std of the residuals
 residuals = lin_model.predict(X) - y
@@ -879,7 +871,7 @@ mu = lin_model.predict(growth)[0]
 dist = norm(mu, sigma)
 plt.subplot(1, 2, 2)
 plot_dist_and_proba(dist, 40, 65, 50)
-plt.title("Non-probabilistic model")
+plt.title("Probabilistic model with constant std")
 ```
 
     
@@ -887,7 +879,7 @@ plt.title("Non-probabilistic model")
     
 
 
-Both models predict a relatively high probability of Clinton winning. As this vote is now a part of history, we figure out that both models' predictions were incorrect. The probabilistic model, in particular, yields a lower probability of winning, primarily due to the higher spread of data points around a growth value of 2. It's important to note that the specific probability from the probabilistic model may vary depending on the model obtained after training.
+Both models predict a relatively high probability of Clinton winning. As this vote is now a part of history, we know that both models' predictions were incorrect. The probabilistic model, fitted with NLL, yields a lower probability of winning, primarily due to the higher spread of data points around a growth value of 2. It's important to note that the specific probability from the probabilistic model may vary depending on the model obtained after training.
 
 # Summary
 Probabilistic regression models are created by fitting all the parameters of the distribution assumed for the data. Once these models are fitted, they can predict the target value and evaluate the uncertainty associated with the prediction. The flexibility of neural networks allows us to choose whether to fit each parameter of the distribution linearly or non-linearly. Depending on the specific problem and dataset, probabilistic models can be harnessed to make more informative decisions, as demonstrated in the voting example above (e.g., using 1−CDF).
