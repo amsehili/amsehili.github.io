@@ -7,13 +7,13 @@ draft = false
 
 In the [first article](https://amsehili.github.io/posts/pdl/mle-for-regression-problems) of this series, we discussed the use of NLL (Negative Log-Likelihood) as a loss function in the context of linear regression. We particularly showed that, under the assumptions of linear regression, NLL can be used to find the mean of the normal distribution that generates that data, achieving the same model as with MSE (Mean Squared Error).
 
-When the data is linear and has a constant variance (**homoscedasticity**) that is independent of the independent variable $x$, linear models are  generally suitable. However, when either or both of these conditions—linearity and constant variance—are not met, a linear model may underfit the data. In such cases, it's often more convenient to relax these strict assumptions and consider more sophisticated models that can more accurately capture the distribution of the data. This will the focus of this second article.
+When the data is linear and has a constant variance (**homoscedasticity**) that is independent of the independent variable $x$, linear models are  generally suitable. However, when either or both of these conditions—linearity and constant variance—are not met, a linear model may underfit the data. In such cases, it's often more convenient to relax these strict assumptions and consider more sophisticated models that can more accurately capture the distribution of the data. This will be the focus of this second article.
 
 
 ## Relaxing the assumption about the constant variance of the residuals
 In many datasets, the variance of the residuals is not constant but changes as a function of the independent variable. This phenomenon is known as **heteroscedasticity**.
 
-The following figure depicts data where the variance of the residuals increases as a function of $x$. As observed, with the increase in $x$, the target values $y$ are more dispersed from the regression line. This implies that the range of potential values for $y$ widens, making the predicted value $\hat{y}$, which represents the model's best estimate, less reliable.
+The following figure depicts data where the variance of the residuals increases as a function of $x$. As we can see, with the increase in $x$, the target values $y$ are more dispersed from the regression line. This implies that the range of potential values for $y$ widens, making the predicted value $\hat{y}$, which represents the model's best estimate, less reliable.
 
 
 {{%expand "Show code" %}}
@@ -70,7 +70,7 @@ In the case of a non-probabilistic model that is fitted using MSE, we lack a mec
 
 In the [previous article](https://amsehili.github.io/posts/pdl/mle-for-regression-problems), we employed NLL to fit the mean of the Gaussian distribution representing the data. However, we did not estimate the other key parameter of the distribution, the standard deviation (std), under the assumption that the std of the residuals is constant across the data. We demonstrated that under this assumption, fitting a model using NLL is effectively equivalent to using MSE, as both methods aim to minimize the discrepancies between observed and predicted values.
 
-In this second article, we'll use NLL to fit both parameters of the Gaussian distribution (mean and standard deviation) to obtain a truly probabilistic model. This approach will allows us to evaluate the uncertainty of the model's outputs. The steps to fit a probabilistic model include:
+In this second article, we'll use NLL to fit both parameters of the Gaussian distribution (mean and std) to obtain a truly probabilistic model. This approach will allows us to evaluate the uncertainty of the model's outputs. The steps to fit a probabilistic model include:
 
 - Selecting a distribution family, which we assume represents the target variable $y$.
 - Building a model, typically a neural network, that outputs the **parameters** $\theta$ of the chosen distribution for each input $x$. This model predicts the distribution parameters $\theta$ instead of directly predicting the target value $y$.
@@ -79,9 +79,10 @@ In this second article, we'll use NLL to fit both parameters of the Gaussian dis
 At this point, you may wonder: if the model predicts the parameters of a distribution, how do we obtain the final value $\hat{y}$? This value is typically the mean of the distribution, which is what the model was trained to predict in the previous article. Unlike a non-probabilistic model, we now have a method to compute the likelihood of this mean (as well as any other possible values) and assess the uncertainty associated with the model's predictions.
 
 ## Creating a model that predicts all the parameters of a Gaussian distribution
-In the following, we construct a simple linear model designed to predict the two parameters of the Gaussian distribution: the mean and the standard deviation (std). More specifically, the model outputs the mean and the logarithm of the standard deviation. We then apply the exponential function to the latter to ensure that the standard deviation is always positive. This approach, although based on a linear model, enables us to fit data with a non-constant standard deviation, potentially achieving a better NLL (Negative Log-Likelihood) than a model that predicts only the mean.
+In the following, we create a simple linear model to predict the two parameters of the Gaussian distribution: the mean and the std. More precisely, the model outputs the mean and the logarithm of the std. We then apply the exponential function to the latter to ensure that it's always positive. This model will allow us to fit data
+with a non-constant standard deviation, achieving a better NLL on validation data than a simple linear regression model.
 
-Note that in the following code, and in contrast to the first article, we are not defining a `proba_normal` function followed by an `NLL` function that calls `proba_normal` and returns the negative log of the result. Instead, our `NLL` function now directly implements the negative of the log of the Gaussian distribution function.
+Note that in the following code, unlike the first article, we're not defining a `proba_normal` function and an `NLL` function that calls it and returns the negative log of the result. Instead, our `NLL` function now directly implements the negative of the log of the Gaussian distribution function.
 
 
 {{< tabs groupid="1" >}}
@@ -229,8 +230,7 @@ plt.legend(loc="upper left")
     
 ![png](output_15_1.png)
     
-
-It appears that the regression lines of the two models are slightly different. More importantly, the learned standard deviation seems to align well with the spread of the data and varies as a function of the input $x$. This raises the question: does this make the NLL-optimized model better than the MSE-optimized one? To answer this question, we generate some validation data and compute the validation loss for each model to make a more informed comparison.
+The regression lines of the two models look slightly different. But importantly, the learned std seems to align well with the spread of the data and varies as a function of the input $x$. Now, the question is: does this make the NLL-optimized model any better than the MSE-optimized one? To answer this question, we generate some validation data and compute the validation loss for each model to make a more informed comparison
 
 
 ```python
@@ -260,7 +260,7 @@ theta = model.predict(X_val)
 {{% /tab %}}
 {{< /tabs >}}
 
-The following code constructs a normal distribution (using scipy) for each data point based on the mean and standard deviation predicted by the model. It then computes the average NLL of all points. Furthermore, for purposes of comparison, we also calculate the validation MSE of the model.
+The following code creates a normal distribution (using scipy) for each data point based on the mean and standard deviation predicted by the model. It then computes the average NLL of all points. Furthermore, for purposes of comparison, we also calculate the validation MSE of the model.
 
 
 ```python
@@ -295,10 +295,10 @@ print(f"NLL: {nll:.4}", f"MSE: {mse:.4}")
     NLL: 3.176 MSE: 33.56
 
 
-We can see that the NLL-optimized model outperforms the MSE-optimized one when considering both loss metrics. Furthermore, this model enables us to compute the probability density of the predicted target values, thereby allowing us to quantify the uncertainty associated with each prediction. We will delve deeper into this aspect in the final part of the article. In the next section, we'll move beyond the assumption of data linearity and fit our first probabilistic non-linear regression model.
+We can see that the NLL-optimized model outperforms the MSE-optimized for both loss metrics. Furthermore, this model enables us to compute the probability (density) of the predicted target values, allowing us to quantify the uncertainty associated with the predictions. We will delve deeper into this aspect in the final part of the article. In the next section, we'll move beyond the assumption of data linearity and fit our first non-linear probabilistic regression model.
 
 ## Relaxing the assumption about the linearity of the data
-Dealing with non-linear data in regression problems is a very common in practice. One effective strategy to address this using neural networks involves employing non-linear activation functions. Additionally, depending on the complexity of the data, enhancing the network's representation capacity by adding more layers and increasing the number of parameters within these layers can be beneficial. In the following section, we will generate some non-linear data then construct a neural network with two layers and a non-linear activation and fit it on the generated data.
+Dealing with non-linear data in regression problems is a very common in practice. One common way to tackle such problems using neural networks is using non-linear activation functions. Moreover, depending on the complexity of the data, increasing the network's representation capacity by stacking more layers and increasing the number of parameters within the layers can be useful. In the following, we will generate some non-linear data and fit a neural network with two layers and a non-linear activation after the first layer.
 
 {{%expand "Show code" %}}
 ```python
@@ -409,7 +409,7 @@ theta = model.predict(X)
 {{% /tab %}}
 {{< /tabs >}}
 
-The figure below displays the regression line produced by the model along with the varying standard deviation that it has learned.
+The figure below displays the regression line produced by the model along with the varying std that it has learned.
 
 
 ```python
@@ -426,9 +426,9 @@ plt.legend(loc="lower center")
 
 # A Practical example: forecasting the next US president using economic growth
 
-In this section, we use data collected by political scientist Douglas Hibbs, as featured in the book *Regression and Other Stories* by Gelman, Hill, and Vehtari. The dataset is accessible for download from the book's [official repository](https://github.com/avehtari/ROS-Examples).
+In this section, we use data collected by political scientist Douglas Hibbs, as featured in the book *Regression and Other Stories* by Gelman, Hill, and Vehtari. The dataset is available for download from the book's [official repository](https://github.com/avehtari/ROS-Examples).
 
-Hibbs developed a model known as "Bread and Peace" to forecast election outcomes based on economic growth, with adjustments made for wartime conditions. The data is presented in the table below, where `vote` represents the incumbent party's vote percentage, and `growth` denotes the average personal income growth during the years leading up to the vote.
+Hibbs developed a model known as "Bread and Peace" to forecast US election outcomes based on economic growth as the only feature (with adjustments made for wartime conditions). The data is presented in the table below, where `vote` represents the incumbent party's vote percentage, and `growth` denotes the average personal income growth during the years leading up to the vote.
 
 
 ```python
@@ -616,7 +616,7 @@ plt.plot(
 
 
 ## A probabilistic model for Hibbs' data
-We will construct a probabilistic neural network to model Hibbs' data. Leveraging on the flexibility of neural networks, we will make a slightly different architectural choice for our model compared to the previous one. We will employ a linear branch of the network to predict the mean of the distribution (representing the model's best guess), and a non-linear branch to predict the standard deviation, allowing our model to adapt to the varying spread of data points across different values of $x$.
+In the following, we'll build a probabilistic neural network to model Hibbs' data. Leveraging the flexibility of neural networks, we will make a slightly different architectural choice for our model compared to the previous one. We will use a linear branch of the network to predict the mean of the distribution (representing the model's best guess), and a non-linear branch to predict the std, allowing our model to adapt to the varying spread of data points across different values of $x$.
 
 
 {{< tabs groupid="1" >}}
@@ -735,7 +735,7 @@ plt.legend(loc="upper left")
 
 The model effectively captures the varying spread of the data, with the highest level of uncertainty occurring within the growth interval between 2 and 3. Consequently, it is advisable to approach predictions made by the model (represented by the red dashed line, indicating the mean of the distribution) with caution. This observation aligns with our intuition after analyzing the data, indicating that relying solely on growth as a feature may not be sufficient for predicting voting outcomes, and additional features may be necessary.
 
-Now, let's visualize the obtained distributions at four different growth levels: 0, 1, 2, and 4. Notably, the distributions appear narrower at very low and very high growth levels:
+Let's now visualize the obtained distributions at four different growth levels: 0, 1, 2, and 4. The distributions appear narrower at very low and very high growth levels:
 
 {{%expand "Show code" %}}
 ```python
@@ -781,8 +781,7 @@ plt.ylabel("Vote")
 ![png](output_52_1.png)
     
 
-
-We can use these distributions to calculate the probability density of the model's best estimate (the mean of the distribution) at these specific points:
+We can use these distributions to calculate the probability density of the model's best estimate (i.e., the mean of the distribution) at these specific points:
 
 {{%expand "Show code" %}}
 ```python
@@ -807,9 +806,9 @@ We can see that the model is much less certain about its predictions for growth 
 ## Getting the most out of the model
 While obtaining the model's best estimate and evaluating its uncertainty is valuable, there is room for improvement in this specific dataset and problem. Instead of solely predicting the incumbent party's candidate's vote share, we can calculate the probability of that candidate winning the election, defined as receiving more than 50% of the votes. This can be achieved by computing the [Cumulative Distribution Function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) (CDF) for a vote share equal to 50 (i.e., the probability that a value is less than 50 in the given distribution) and subtracting it from 1:
 
-$$p(vote > 50) =  1 - p(vote <= 50) = 1 - CDF(50)$$.
+$$p(vote > 50) =  1 - p(vote <= 50) = 1 - CDF(50)$$
 
-Now, let's examine the 2016 vote, which was between Hillary Clinton (the candidate of the incumbent party) and Donald Trump. The economic growth in the period preceding the vote was approximately 2.0 (this data point was not part of the training dataset). According to the probabilistic model, Clinton is predicted to receive a vote share of 52.96%—this value may be different, depending on the obtained model— while the non-probabilistic model predicts a vote share of 52.37%
+Now, let's examine the 2016 vote, which was between Hillary Clinton (the candidate of the incumbent party) and Donald Trump. The economic growth in the period preceding the vote was approximately 2.0 (this data point was not part of the training dataset). According to the probabilistic model, Clinton is predicted to receive a vote share of 52.96%—this value may be different, depending on the model you obtained after training— while the non-probabilistic model predicts a vote share of 52.37%.
 
 
 ```python
@@ -822,7 +821,7 @@ print(f"Non-prob. model: {lin_model.predict(growth)[0]:.2f}")
     Non-prob. model: 52.37
 
 
-We define a helper function to calculate and visualize the probability of winning, $p(vote > 50)$, based on each model's predictions. For the non-probabilistic model, we use the standard deviation of the residuals from the training data.
+We define a helper function to calculate and visualize the probability of winning, $p(vote > 50)$, based on each model's predictions. For the non-probabilistic model, we use the std of the residuals from the training data.
 
 {{%expand "Show code" %}}
 ```python
@@ -879,7 +878,7 @@ plt.title("Probabilistic model with constant std")
     
 
 
-Both models predict a relatively high probability of Clinton winning. As this vote is now a part of history, we know that both models' predictions were incorrect. The probabilistic model, fitted with NLL, yields a lower probability of winning, primarily due to the higher spread of data points around a growth value of 2. It's important to note that the specific probability from the probabilistic model may vary depending on the model obtained after training.
+Both models predict a relatively high probability of Clinton winning. As this vote is now a part of history, we know that both models' predictions were incorrect. The probabilistic model, fitted with NLL, yields a lower probability of winning, mainly due to the higher spread of data points around a growth value of 2. It's important to note that the specific probability from the probabilistic model may vary depending on the model obtained after training.
 
 # Summary
-Probabilistic regression models are created by fitting all the parameters of the distribution assumed for the data. Once these models are fitted, they can predict the target value and evaluate the uncertainty associated with the prediction. The flexibility of neural networks allows us to choose whether to fit each parameter of the distribution linearly or non-linearly. Depending on the specific problem and dataset, probabilistic models can be harnessed to make more informative decisions, as demonstrated in the voting example above (e.g., using 1−CDF).
+Probabilistic regression models are created by fitting all the parameters of the distribution assumed for the data. Once fitted, these models can be used to predict the target value and evaluate the uncertainty associated with the prediction. The flexibility of neural networks allows us to choose how to fit each parameter of the distribution: linearly or non-linearly. Depending on the problem at hand and dataset, probabilistic models can be used to make more informative decisions, as demonstrated in the voting example above (e.g., using 1-CDF).

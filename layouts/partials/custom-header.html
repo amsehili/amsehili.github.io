@@ -4,33 +4,40 @@
 {{- partial "katex_support.html" . }}
 
 <style type="text/css">
+
+article {
+        margin-right: 0%;
+    }
+
+@media (min-width: 992px) {
+
+    article {
+        margin-right: 0%;
+    }
+}
+
 @media (min-width: 1281px) {
 
-    #body-inner, #top-bar {
-        margin-right: 5%;
+    article {
+        margin-right: 0%;
+
     }
 }
 
 @media (min-width: 1400px) {
 
-    #body-inner, #top-bar {
-        margin-right: 12.5%;
+    article {
+        margin-right: 0%;
     }
 }
 
 @media (min-width: 1600px) {
 
-    #body-inner, #top-bar {
-        margin-right: 40%;
+    article {
+        margin-right: 0%;
     }
 }
 
-
-#body-inner {
-
-color: #000000;
-
-}
 
 #R-header-wrapper, #R-homelinks
 {
@@ -68,7 +75,7 @@ color: #000000;
 
 #R-shortcuts ul.space li a i{
 
-font-size: 1.1rem;
+    font-size: 1.1rem;
 
 }
 
@@ -85,6 +92,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #303570;
     font-weight: 700;
 }
+
 
 h1 {
     font-family: "Open Sans", "Work Sans", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
@@ -123,7 +131,8 @@ h6 {
 .author{
     font-weight: 600;
     font-family: "Open Sans";
-    color: #333;
+    font-size: 1.1rem !important;
+    color: #111;
     text-transform: capitalize;
 }
 
@@ -152,8 +161,6 @@ font-style: italic;
 strong{
     font-weight: 900;
     font-family: "Open Sans";
-    color: rgb(5, 5, 5);
-    font-display: swap;
 }
 
 pre {
@@ -185,5 +192,24 @@ a:hover{
     text-align: left;
 }
 
+#R-body .tab-nav-button.active  {
+    background-color: orange;
+}
+
+
+@media (prefers-color-scheme: dark) {
+
+ h1, h2, h3, h4 {
+   color:   #4da6ff;
+ }
+
+ h5, h6 {
+   color:   #8ec1f4;
+ }
+
+ .author{
+   color: #CCC;
+}
+}
 
 </style>
