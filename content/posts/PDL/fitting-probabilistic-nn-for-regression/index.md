@@ -426,7 +426,7 @@ plt.legend(loc="lower center")
 
 # A Practical example: forecasting the next US president using economic growth
 
-In this section, we use data collected by political scientist Douglas Hibbs, as featured in the book *Regression and Other Stories* by Gelman, Hill, and Vehtari. The dataset is available for download from the book's [official repository](https://github.com/avehtari/ROS-Examples).
+In this section, we use data collected by political scientist Douglas Hibbs, as introduced in the book *Regression and Other Stories*, chapter 7, by Gelman, Hill, and Vehtari. The dataset is available for download from the book's [official repository](https://github.com/avehtari/ROS-Examples).
 
 Hibbs developed a model known as "Bread and Peace" to forecast US election outcomes based on economic growth as the only feature (with adjustments made for wartime conditions). The data is presented in the table below, where `vote` represents the incumbent party's vote percentage, and `growth` denotes the average personal income growth during the years leading up to the vote.
 
@@ -806,7 +806,7 @@ We can see that the model is much less certain about its predictions for growth 
 ## Getting the most out of the model
 While obtaining the model's best estimate and evaluating its uncertainty is valuable, there is room for improvement in this specific dataset and problem. Instead of solely predicting the incumbent party's candidate's vote share, we can calculate the probability of that candidate winning the election, defined as receiving more than 50% of the votes. This can be achieved by computing the [Cumulative Distribution Function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) (CDF) for a vote share equal to 50 (i.e., the probability that a value is less than 50 in the given distribution) and subtracting it from 1:
 
-$$p(vote > 50) =  1 - p(vote <= 50) = 1 - CDF(50)$$
+$$p(vote > 50) =  1 - p(vote \le 50) = 1 - CDF(50)$$
 
 Now, let's examine the 2016 vote, which was between Hillary Clinton (the candidate of the incumbent party) and Donald Trump. The economic growth in the period preceding the vote was approximately 2.0 (this data point was not part of the training dataset). According to the probabilistic model, Clinton is predicted to receive a vote share of 52.96%—this value may be different, depending on the model you obtained after training— while the non-probabilistic model predicts a vote share of 52.37%.
 
