@@ -15,20 +15,9 @@ In the following, we'll first introduce the basic usage of Tensorflow Probabilit
 
 Roughly speaking, a probabilistic model created using Tensorflow Probability is structured as shown in the following figure.
 
-
-```python
-from PIL import Image
-import numpy as np
-from matplotlib import pyplot as plt
-img = np.asarray(Image.open('figures/TF-TFP model.png'))
-plt.axis('off')
-plt.imshow(img)
-```
-
-   
+  
 ![png](output_3_1.png)
     
-
 
 The first N layers are standard Tensorflow layers and activations commonly found in various models. The last layer is where we use classes from Tensorflow Probability. This layer typically contains an instance of the desired distribution class(es) (e.g., `Normal`, `Gamma`, etc.) wrapped within a `DistributionLambda` object.
 
