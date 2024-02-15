@@ -435,7 +435,7 @@ $$
 \end{aligned}
 $$
 
-That $- \sum_{j} p_\mathcal{D}(y) \log p(y | \theta)$ quantity above, which finally reduces to  $\text{NLL}(\theta)$, is referred to as **cross-entropy** and is what we want the training process to minimize. In Keras you'd pass `binary_crossentropy` (for binary classification) or `categorical_crossentropy` (for multiclass classification) as the loss function to compile a classification model. In Pytorch you'd specify `nn.BCELoss` or `nn.CrossEntropyLoss` as the loss funntion.
+That $- \sum_{j} p_\mathcal{D}(y) \log p(y | \theta)$ quantity above, which finally reduces to  $\text{NLL}(\theta)$, is referred to as **cross-entropy** and is what we want the training process to minimize. In Keras you'd pass `binary_crossentropy` (for binary classification) or `categorical_crossentropy` (for multiclass classification) as the loss function to compile a classification model. In Pytorch you'd specify `nn.BCELoss` or `nn.CrossEntropyLoss` as the loss function.
 
 Hence, minimizing the KLD in the context of classification boils down to minimizing the NLL or performing the Maximum Likelihood Estimation (MLE) introduced in the [first article](https://amsehili.github.io/posts/pdl/mle-for-regression-problems/index.html).
 
