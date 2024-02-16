@@ -174,7 +174,7 @@ To obtain "useful" predictions from the model, we can leverage other statistics 
 
 ### Fitting a linear regression model with a Distribution layer
 
-Now we'll create and fit a linear regression model by using the `Normal` distribution class in the output layer. Note that unlike the first two articles, we're using **softplus** function instead of the exponential to guarantee that the std remains positive. The softplus function, defined as $\text{softplus}(x) = \log(\exp(x) + 1)$, increases linearly for large input values as illustrated in the following figure:
+Now we'll create and fit a linear regression model by using the `Normal` distribution class in the output layer. Note that unlike the first two articles, we're using the **softplus** function instead of the exponential to guarantee that the std remains positive. The softplus function, defined as $\text{softplus}(x) = \log(\exp(x) + 1)$, increases linearly for large input values as illustrated in the following figure:
 
 
 
@@ -213,7 +213,7 @@ model = tf.keras.Sequential(
 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.01), loss=NLL)
 ```
 
-We generate fake data with residual's variance that increases linearly as a function of the input $x$ and fit our model. The generated data is the same as the one generated in the [second article](https://amsehili.github.io/posts/pdl/fitting-probabilistic-nn-for-regression).
+We generate fake data with a residuals' variance that increases linearly as a function of the input $x$ and fit our model. The generated data is the same as the one generated in the [second article](https://amsehili.github.io/posts/pdl/fitting-probabilistic-nn-for-regression).
 
 
 ```python
@@ -489,8 +489,7 @@ accuracy_score(y_test, y_pred)
     0.8666666666666667
 
 
-
-Given that we're dealing with a binary classification problem, the **Bernoulli** distribution is what we need to specify in the final layer of the model. The `Bernoulli` class in both Tensorflow Probability and Pytorch Distributions takes either the probability of the positive event, $p(y = 1)$, or the $\text{logit}$ as input. If we choose to pass the probability, we should specify the sigmoid function as the activation of the layer the precedes the distribution layer. In the following, we will pass the $\text{logit}$ to the distribution layer and let it turn it into a probability.
+Given that we're dealing with a binary classification problem, the **Bernoulli** distribution is what we need to specify in the final layer of the model. The `Bernoulli` class in both Tensorflow Probability and Pytorch Distributions takes either the probability of the positive event, $p(y = 1)$, or the $\text{logit}$ as input. If we choose to pass the probability, we should specify the sigmoid function as the activation for the output of the layer immediately preceding the distribution layer. In the following, we'll pass the $\text{logit}$ to the distribution layer and let it turn it into a probability.
 
 {{< tabs groupid="1" >}}
 {{% tab title="PYTORCH" %}}
@@ -608,7 +607,7 @@ print(f"NLL: {nll:.4f}, prob: {prob:.4f}")
 
 
 ### A multiclass classification model
-The model architecture is quite similar to the one we used for logistic regression. The most notable difference is the use of more parameters in the first layer, which followed by a non-linear activation, and the use of the `Categorical` class in the output layer instead of `Bernoulli`. And of course, we'll be using the same `NLL` loss function defined earlier to train the model.
+The model architecture is quite similar to the one we used for logistic regression. The most notable difference is the use of more parameters in the first layer, which is followed by a non-linear activation, and the use of the `Categorical` class in the output layer instead of `Bernoulli`. And of course, we'll be using the same `NLL` loss function defined earlier to train the model.
 
 
 ```python
